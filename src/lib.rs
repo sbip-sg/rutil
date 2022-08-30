@@ -24,8 +24,8 @@ pub mod macros;
 
 // Export sub modules
 // pub mod cli;
-pub mod cli;
-pub mod global;
+pub mod arg;
+pub mod debug;
 pub mod report;
 pub mod string;
 pub mod system;

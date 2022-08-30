@@ -29,6 +29,3 @@ pub mod debug;
 pub mod report;
 pub mod string;
 pub mod system;
-pub mod traits;
-
-pub use traits::Printing;

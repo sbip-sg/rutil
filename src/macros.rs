@@ -35,7 +35,7 @@ macro_rules! formati {
             use std::fmt::Write as FmtWrite;
             use $crate::report;
             let tw = report::get_terminal_width() -
-                $crate::global::DEBUG_MARKER_LEN - 3;
+                $crate::debug::DEBUG_MARKER_LEN - 3;
             // let msg = std::fmt::format(std::format_args_nl!($($arg)*));
             let mut msg = String::new();
             let _ = writeln!(msg, $($arg)*);
@@ -67,7 +67,7 @@ macro_rules! formatp {
 macro_rules! print {
     () => {
         unsafe {
-            if !$crate::global::DISABLE_PRINTING {
+            if !$crate::debug::DISABLE_PRINTING {
                 std::print!("")
             }
         }
@@ -75,15 +75,15 @@ macro_rules! print {
     ($($arg:tt)*) => {
         unsafe {
             use $crate::report;
-            if !$crate::global::DISABLE_PRINTING {
-                if $crate::global::DEBUG_MODE {
+            if !$crate::debug::DISABLE_PRINTING {
+                if $crate::debug::DEBUG_MODE {
                     let marker = "[inf] ";
-                    $crate::global::DEBUG_MARKER_LEN = marker.len();
+                    $crate::debug::DEBUG_MARKER_LEN = marker.len();
                     let msg = std::fmt::format(std::format_args!($($arg)*));
                     let tw = report::get_terminal_width();
                     let msg = report::beautify_string(marker, false, 0, "", &msg, tw);
                     std::print!("{}", msg);
-                    $crate::global::DEBUG_MARKER_LEN = 0
+                    $crate::debug::DEBUG_MARKER_LEN = 0
                 }
                 else {
                     std::io::_print($crate::format_args_nl!($($arg)*));
@@ -100,7 +100,7 @@ macro_rules! print {
 macro_rules! println {
     () => {
         unsafe {
-            if !$crate::global::DISABLE_PRINTING {
+            if !$crate::debug::DISABLE_PRINTING {
                 std::println!("")
             }
         }
@@ -109,15 +109,15 @@ macro_rules! println {
         unsafe {
             use std::fmt::Write as FmtWrite;
             use $crate::report;
-            if !$crate::global::DISABLE_PRINTING {
-                if $crate::global::DEBUG_MODE {
+            if !$crate::debug::DISABLE_PRINTING {
+                if $crate::debug::DEBUG_MODE {
                     let marker = "[inf] ";
-                    $crate::global::DEBUG_MARKER_LEN = marker.len();
+                    $crate::debug::DEBUG_MARKER_LEN = marker.len();
                     let msg = std::fmt::format(std::format_args!($($arg)*));
                     let tw = report::get_terminal_width();
                     let msg = report::beautify_string(marker, false, 0, "", &msg, tw);
                     std::println!("{}", msg);
-                    $crate::global::DEBUG_MARKER_LEN = 0
+                    $crate::debug::DEBUG_MARKER_LEN = 0
                 }
                 else {
                     // std::io::_print($crate::format_args_nl!($($arg)*));
@@ -175,9 +175,9 @@ macro_rules! todo {
         unsafe {
             use std::fmt::Write as FmtWrite;
             use $crate::report;
-            if !$crate::global::DISABLE_PRINTING {
+            if !$crate::debug::DISABLE_PRINTING {
                 let marker = "[!!!] ";
-                $crate::global::DEBUG_MARKER_LEN = marker.len();
+                $crate::debug::DEBUG_MARKER_LEN = marker.len();
                 let msg = "TODO: Not yet implemented!\n";
                 let tw = report::get_terminal_width();
                 let func = std::format!("{}", $crate::function!());
@@ -190,7 +190,7 @@ macro_rules! todo {
                     "\n" +
                     &report::log_file_name("", 6, &file, tw);
                 std::println!("{}", msg);
-                $crate::global::DEBUG_MARKER_LEN = 0
+                $crate::debug::DEBUG_MARKER_LEN = 0
             }
         }
     };
@@ -198,10 +198,10 @@ macro_rules! todo {
         unsafe {
             use std::fmt::Write as FmtWrite;
             use $crate::report;
-            if !$crate::global::DISABLE_PRINTING {
+            if !$crate::debug::DISABLE_PRINTING {
                 let marker = "[!!!] ";
                 let mkr_len = marker.len();
-                $crate::global::DEBUG_MARKER_LEN = marker.len();
+                $crate::debug::DEBUG_MARKER_LEN = marker.len();
                 // let msg = "TODO: ".to_owned() +
                 //     &std::fmt::format(bstd::format_args_nl!($($arg)*));
                 let mut msg = "TODO: ".to_owned();
@@ -217,7 +217,7 @@ macro_rules! todo {
                     "\n" +
                     &report::log_file_name("", mkr_len, &file, tw);
                 std::println!("{}", msg);
-                $crate::global::DEBUG_MARKER_LEN = 0
+                $crate::debug::DEBUG_MARKER_LEN = 0
             }
         }
     }
@@ -231,7 +231,7 @@ macro_rules! debug_core {
         // unsafe {
             use $crate::report;
             use std::fmt::Write as FmtWrite;
-            $crate::global::DEBUG_MARKER_LEN = $marker.len();
+            $crate::debug::DEBUG_MARKER_LEN = $marker.len();
             // let msg = std::fmt::format(std::format_args_nl!($($arg)*));
             let mut msg = String::new();
             let _ = writeln!(msg, $($arg)*);
@@ -239,7 +239,7 @@ macro_rules! debug_core {
             let msg = report::beautify_string($marker, false, $indent, $prefix,
                                               &msg, tw);
             std::println!("{}", msg);
-            $crate::global::DEBUG_MARKER_LEN = 0
+            $crate::debug::DEBUG_MARKER_LEN = 0
         // }
     }
 }
@@ -250,8 +250,8 @@ macro_rules! debug_core {
 macro_rules! debug {
     ($($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEBUG_MODE && !debug::DISABLE_PRINTING {
                 $crate::debug_core!("[dbg] ", 0, "", $($arg)*);
             }
         }
@@ -264,8 +264,8 @@ macro_rules! debug {
 macro_rules! ddebug {
     ($($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEEP_DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEEP_DEBUG_MODE && !debug::DISABLE_PRINTING {
                 $crate::debug_core!("[dbx] ", 0, "", $($arg)*);
             }
         }
@@ -278,8 +278,8 @@ macro_rules! ddebug {
 macro_rules! debugi {
     ($indent:expr, $($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEBUG_MODE && !debug::DISABLE_PRINTING {
                 $crate::debug_core!("[dbg] ", $indent, "", $($arg)*);
             }
         }
@@ -292,8 +292,8 @@ macro_rules! debugi {
 macro_rules! ddebugi {
     ($indent:expr, $($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEEP_DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEEP_DEBUG_MODE && !debug::DISABLE_PRINTING {
                 $crate::debug_core!("[dbx] ", $indent, "", $($arg)*);
             }
         }
@@ -306,8 +306,8 @@ macro_rules! ddebugi {
 macro_rules! debugp {
     ($indent:expr, $prefix:expr, $($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEBUG_MODE && !debug::DISABLE_PRINTING {
                 $crate::debug_core!("[dbg] ", $indent, $prefix, $($arg)*);
             }
         }
@@ -321,8 +321,8 @@ macro_rules! debugp {
 macro_rules! ddebugp {
     ($indent:expr, $prefix:expr, $($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEEP_DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEEP_DEBUG_MODE && !debug::DISABLE_PRINTING {
                 $crate::debug_core!("[dbx] ", $indent, $prefix, $($arg)*);
             }
         }
@@ -335,8 +335,8 @@ macro_rules! ddebugp {
 macro_rules! debug_header_0 {
     ($($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEBUG_MODE && !debug::DISABLE_PRINTING {
                 let ruler = &"=".repeat(55);
                 let ruler = "[dbg] ".to_owned() + ruler;
                 std::println!("{}", ruler);
@@ -353,8 +353,8 @@ macro_rules! debug_header_0 {
 macro_rules! ddebug_header_0 {
     ($($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEEP_DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEEP_DEBUG_MODE && !debug::DISABLE_PRINTING {
                 let ruler = &"=".repeat(55);
                 let ruler = "[dbx] ".to_owned() + ruler;
                 std::println!("{}", ruler);
@@ -371,8 +371,8 @@ macro_rules! ddebug_header_0 {
 macro_rules! debug_header_1 {
     ($($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEBUG_MODE && !debug::DISABLE_PRINTING {
                 let ruler = &"-".repeat(36);
                 let ruler = "[dbg] ".to_owned() + ruler;
                 std::println!("{}", ruler);
@@ -389,8 +389,8 @@ macro_rules! debug_header_1 {
 macro_rules! ddebug_header_1 {
     ($($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEEP_DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEEP_DEBUG_MODE && !debug::DISABLE_PRINTING {
                 let ruler = &"-".repeat(36);
                 let ruler = "[dbx] ".to_owned() + ruler;
                 std::println!("{}", ruler);
@@ -408,7 +408,7 @@ macro_rules! debug_header_2 {
     ($($arg:tt)*) => {
         unsafe {
             use $crate::report;
-            if $crate::global::DEBUG_MODE && !$crate::global::DISABLE_PRINTING {
+            if $crate::debug::DEBUG_MODE && !$crate::debug::DISABLE_PRINTING {
                 let ruler = &"-".repeat(23);
                 let ruler = "[dbg] ".to_owned() + ruler;
                 std::println!("{}", ruler);
@@ -425,8 +425,8 @@ macro_rules! debug_header_2 {
 macro_rules! ddebug_header_2 {
     ($($arg:tt)*) => {
         unsafe {
-            use $crate::global;
-            if global::DEEP_DEBUG_MODE && !global::DISABLE_PRINTING {
+            use $crate::debug;
+            if debug::DEEP_DEBUG_MODE && !debug::DISABLE_PRINTING {
                 let ruler = &"-".repeat(23);
                 let ruler = "[dbx] ".to_owned() + ruler;
                 std::println!("{}", ruler);
@@ -444,7 +444,7 @@ macro_rules! ddebug_header_2 {
 macro_rules! fixme {
     () => {
         unsafe {
-            if $crate::global::DEBUG_MODE && !$crate::global::DISABLE_PRINTING {
+            if $crate::debug::DEBUG_MODE && !$crate::debug::DISABLE_PRINTING {
                 std::print!("\n")
             }
         }
@@ -453,9 +453,9 @@ macro_rules! fixme {
         unsafe {
             use std::fmt::Write as FmtWrite;
             use $crate::report;
-            if $crate::global::DEBUG_MODE && !$crate::global::DISABLE_PRINTING {
+            if $crate::debug::DEBUG_MODE && !$crate::debug::DISABLE_PRINTING {
                 let marker = "[!!!] ";
-                $crate::global::DEBUG_MARKER_LEN = marker.len();
+                $crate::debug::DEBUG_MARKER_LEN = marker.len();
                 // let msg = "FIXME: ".to_owned() +
                 //     &std::fmt::format(std::format_args_nl!($($arg)*));
                 let mut msg = "FIXME: ".to_owned();
@@ -471,7 +471,7 @@ macro_rules! fixme {
                     "\n" +
                     &report::log_file_name("", 6, &file, tw);
                 std::println!("{}", msg);
-                $crate::global::DEBUG_MARKER_LEN = 0
+                $crate::debug::DEBUG_MARKER_LEN = 0
             }
         }
     }
@@ -484,7 +484,7 @@ macro_rules! fixme {
 macro_rules! warning {
     () => {
         unsafe {
-            if !$crate::global::DISABLE_PRINTING {
+            if !$crate::debug::DISABLE_PRINTING {
                 std::print!("\n")
             }
         }
@@ -493,9 +493,9 @@ macro_rules! warning {
         unsafe {
             use std::fmt::Write as FmtWrite;
             use $crate::report;
-            if !$crate::global::DISABLE_PRINTING {
+            if !$crate::debug::DISABLE_PRINTING {
                 let marker = "[WRN] ";
-                $crate::global::DEBUG_MARKER_LEN = marker.len();
+                $crate::debug::DEBUG_MARKER_LEN = marker.len();
                 // let msg = std::fmt::format(std::format_args_nl!($($arg)*));
                 let mut msg = String::new();
                 let _ = writeln!(msg, $($arg)*);
@@ -510,7 +510,7 @@ macro_rules! warning {
                     "\n" +
                     &report::log_file_name("", 6, &file, tw);
                 std::println!("{}", msg);
-                $crate::global::DEBUG_MARKER_LEN = 0
+                $crate::debug::DEBUG_MARKER_LEN = 0
             }
         }
     }
@@ -525,30 +525,6 @@ macro_rules! error {
         Err(eyre::eyre!($($arg)*))
     })
 }
-
-// /// Macro to exit the current process and report an error
-// #[allow(unused_imports)]
-// #[macro_export]
-// macro_rules! panic {
-//     () => ({
-//         std::print!("\n");
-//         std::panic!();
-//     });
-//     ($($arg:tt)*) => ({
-//         unsafe {
-//             let marker = "[PANIC] ";
-//             $crate::global::DEBUG_MARKER_LEN = marker.len();
-//             use $crate::report;
-//             let msg = std::fmt::format(std::format_args_nl!($($arg)*));
-//             let tw = report::get_terminal_width();
-//             let msg = report::beautify_string(marker, 0, "", &msg, tw);
-//             std::println!("{}", msg);
-//             report::override_panic_message();
-//             $crate::global::DEBUG_MARKER_LEN = 0;
-//             std::panic!("");
-//         }
-//     })
-// }
 
 /// Short-hand expression for it-then-else.
 #[macro_export]

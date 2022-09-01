@@ -1,7 +1,10 @@
 //! Module containing utility functions handling string
 
 /// Trait containing utility functions for the `String` data structure.
-pub trait StringUtil<'a> {
+pub trait StringExt<'a> {
+    /// Check if a string contains the new line character.
+    fn has_new_line(&self) -> bool;
+
     /// Indent all lines of a string.
     fn indent(&self, indent: usize) -> Self;
 
@@ -40,8 +43,13 @@ pub trait StringUtil<'a> {
     ) -> Self;
 }
 
-/// Implement trait `StringUtil` for the `String` data structure.
-impl<'a> StringUtil<'a> for String {
+/// Implement trait `StringExt` for `String`.
+impl<'a> StringExt<'a> for String {
+    /// Check if a string contains the new line character.
+    fn has_new_line(&self) -> bool {
+        self.contains('\n')
+    }
+
     fn indent(&self, indent: usize) -> Self {
         self.lines()
             .map(|line| {

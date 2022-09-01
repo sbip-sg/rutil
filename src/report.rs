@@ -6,7 +6,7 @@ use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
 
-use super::string::StringUtil;
+use super::string::StringExt;
 
 /// Length of a long ruler.
 const LONG_SEPARATOR_LENGTH: usize = 75;

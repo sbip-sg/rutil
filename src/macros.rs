@@ -48,15 +48,15 @@ macro_rules! formati {
 #[allow(unused_imports, unused_unsafe)]
 #[macro_export]
 macro_rules! formatp {
-    ($indent:expr, $prefix:expr, $($arg:tt)*) => {
+    ($lindent:expr, $rindent:expr, $prefix:expr, $($arg:tt)*) => {
         unsafe {
             use $crate::report;
             let tw = report::get_terminal_width() -
-                $crate::global::DEBUG_MARKER_LEN - 3;
+                $crate::global::DEBUG_MARKER_LEN - 3 - $rindent;
             // let msg = std::fmt::format(std::format_args_nl!($($arg)*));
             let mut msg = String::new();
             let _ = writeln!(msg, $($arg)*);
-            report::beautify_string("", false, $indent, $prefix, &msg, tw)
+            report::beautify_string("", false, $lindent, $prefix, &msg, tw)
         }
     }
 }

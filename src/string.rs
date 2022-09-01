@@ -13,6 +13,12 @@ pub trait StringUtil<'a> {
     fn indent_and_prefix_tail_lines(&self, indent: usize, prefix: &str)
         -> Self;
 
+    /// Process all lines of a string.
+    ///
+    /// The second parameter `f` of this function is a function which takes the
+    /// line number (indexed from 0) and the content and produce a new line.
+    fn process_lines(&self, f: fn(usize, String) -> String) -> Self;
+
     /// Add a prefix to a string if it is not empty.
     fn add_prefix_if_not_empty(self, prefix: &str) -> Self;
 
@@ -79,6 +85,14 @@ impl<'a> StringUtil<'a> for String {
                     format!("{}{}", prefix, line)
                 }
             })
+            .collect::<Vec<String>>()
+            .join("\n")
+    }
+
+    fn process_lines(&self, f: fn(usize, String) -> String) -> Self {
+        self.lines()
+            .enumerate()
+            .map(|(idx, line)| f(idx, line.to_string()))
             .collect::<Vec<String>>()
             .join("\n")
     }

@@ -52,7 +52,7 @@ macro_rules! formatp {
         unsafe {
             use $crate::report;
             let tw = report::get_terminal_width() -
-                $crate::global::DEBUG_MARKER_LEN - 3 - $rindent;
+                $crate::debug::DEBUG_MARKER_LEN - 3 - $rindent;
             // let msg = std::fmt::format(std::format_args_nl!($($arg)*));
             let mut msg = String::new();
             let _ = writeln!(msg, $($arg)*);

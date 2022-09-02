@@ -134,36 +134,54 @@ macro_rules! println {
 #[allow(unused_imports)]
 #[macro_export]
 macro_rules! print_header_0 {
-    ($($arg:tt)*) => {{
-        let ruler = &"=".repeat(55);
-        let ruler = "[inf] ".to_owned() + ruler;
-        std::println!("{}", ruler);
-        $crate::println!($($arg)*);
-    }}
+    ($($arg:tt)*) => {
+        unsafe {
+            if !$crate::debug::DISABLE_PRINTING {
+                let mut ruler = "=".repeat(55);
+                if $crate::debug::DEBUG_MODE {
+                    ruler = "[inf] ".to_owned() + &ruler;
+                };
+                std::println!("{}", ruler);
+                $crate::println!($($arg)*);
+            }
+        }
+    }
 }
 
 /// Macro to print messages with the H1 separator level (-----).
 #[allow(unused_imports, unused_unsafe)]
 #[macro_export]
 macro_rules! print_header_1 {
-    ($($arg:tt)*) => {{
-        let ruler = &"-".repeat(36);
-        let ruler = "[inf] ".to_owned() + ruler;
-        std::println!("{}", ruler);
-        $crate::println!($($arg)*);
-    }}
+    ($($arg:tt)*) => {
+        unsafe {
+            if !$crate::debug::DISABLE_PRINTING {
+                let mut ruler = "-".repeat(36);
+                if $crate::debug::DEBUG_MODE {
+                    ruler = "[inf] ".to_owned() + &ruler;
+                };
+                std::println!("{}", ruler);
+                $crate::println!($($arg)*);
+            }
+        }
+    }
 }
 
 /// Macro to print messages with the H2 separator level (-----).
 #[allow(unused_imports, unused_unsafe)]
 #[macro_export]
 macro_rules! print_header_2 {
-    ($($arg:tt)*) => {{
-        let ruler = &"-".repeat(23);
-        let ruler = "[inf] ".to_owned() + ruler;
-        std::println!("{}", ruler);
-        $crate::println!($($arg)*);
-    }}
+    ($($arg:tt)*) => {
+        unsafe {
+            if !$crate::debug::DISABLE_PRINTING {
+                let mut ruler = "-".repeat(23);
+                if $crate::debug::DEBUG_MODE {
+                    ruler = "[inf] ".to_owned() + &ruler;
+                };
+                std::println!("{}", ruler);
+                $crate::println!($($arg)*);
+            }
+        }
+    }
 }
 
 /// Override the default todo! macro to print todo message and logging location.
@@ -175,9 +193,10 @@ macro_rules! todo {
         unsafe {
             use std::fmt::Write as FmtWrite;
             use $crate::report;
-            if !$crate::debug::DISABLE_PRINTING {
-                let marker = "[!!!] ";
-                $crate::debug::DEBUG_MARKER_LEN = marker.len();
+            use $crate::debug;
+            if !debug::DISABLE_PRINTING {
+                let marker = if debug::DEBUG_MODE { "[!!!]" } else { "" };
+                debug::DEBUG_MARKER_LEN = marker.len();
                 let msg = "TODO: Not yet implemented!\n";
                 let tw = report::get_terminal_width();
                 let func = std::format!("{}", $crate::function!());
@@ -190,7 +209,7 @@ macro_rules! todo {
                     "\n" +
                     &report::log_file_name("", 6, &file, tw);
                 std::println!("{}", msg);
-                $crate::debug::DEBUG_MARKER_LEN = 0
+                debug::DEBUG_MARKER_LEN = 0
             }
         }
     };
@@ -198,10 +217,11 @@ macro_rules! todo {
         unsafe {
             use std::fmt::Write as FmtWrite;
             use $crate::report;
+            use $crate::debug;
             if !$crate::debug::DISABLE_PRINTING {
-                let marker = "[!!!] ";
+                let marker = if debug::DEBUG_MODE { "[!!!]" } else { "" };
                 let mkr_len = marker.len();
-                $crate::debug::DEBUG_MARKER_LEN = marker.len();
+                debug::DEBUG_MARKER_LEN = marker.len();
                 // let msg = "TODO: ".to_owned() +
                 //     &std::fmt::format(bstd::format_args_nl!($($arg)*));
                 let mut msg = "TODO: ".to_owned();
@@ -217,7 +237,7 @@ macro_rules! todo {
                     "\n" +
                     &report::log_file_name("", mkr_len, &file, tw);
                 std::println!("{}", msg);
-                $crate::debug::DEBUG_MARKER_LEN = 0
+                debug::DEBUG_MARKER_LEN = 0
             }
         }
     }
@@ -453,11 +473,10 @@ macro_rules! fixme {
         unsafe {
             use std::fmt::Write as FmtWrite;
             use $crate::report;
-            if $crate::debug::DEBUG_MODE && !$crate::debug::DISABLE_PRINTING {
-                let marker = "[!!!] ";
-                $crate::debug::DEBUG_MARKER_LEN = marker.len();
-                // let msg = "FIXME: ".to_owned() +
-                //     &std::fmt::format(std::format_args_nl!($($arg)*));
+            use $crate::debug;
+            if !debug::DISABLE_PRINTING {
+                let marker = if debug::DEBUG_MODE { "[!!!]" } else { "" };
+                debug::DEBUG_MARKER_LEN = marker.len();
                 let mut msg = "FIXME: ".to_owned();
                 let _ = writeln!(msg, $($arg)*);
                 let tw = report::get_terminal_width();
@@ -471,7 +490,7 @@ macro_rules! fixme {
                     "\n" +
                     &report::log_file_name("", 6, &file, tw);
                 std::println!("{}", msg);
-                $crate::debug::DEBUG_MARKER_LEN = 0
+                debug::DEBUG_MARKER_LEN = 0
             }
         }
     }
@@ -493,9 +512,10 @@ macro_rules! warning {
         unsafe {
             use std::fmt::Write as FmtWrite;
             use $crate::report;
-            if !$crate::debug::DISABLE_PRINTING {
-                let marker = "[WRN] ";
-                $crate::debug::DEBUG_MARKER_LEN = marker.len();
+            use $crate::debug;
+            if !debug::DISABLE_PRINTING {
+                let marker = if debug::DEBUG_MODE { "[WRN]" } else { "" };
+                debug::DEBUG_MARKER_LEN = marker.len();
                 // let msg = std::fmt::format(std::format_args_nl!($($arg)*));
                 let mut msg = String::new();
                 let _ = writeln!(msg, $($arg)*);
@@ -510,7 +530,7 @@ macro_rules! warning {
                     "\n" +
                     &report::log_file_name("", 6, &file, tw);
                 std::println!("{}", msg);
-                $crate::debug::DEBUG_MARKER_LEN = 0
+                debug::DEBUG_MARKER_LEN = 0
             }
         }
     }

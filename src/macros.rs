@@ -50,6 +50,7 @@ macro_rules! formati {
 macro_rules! formatp {
     ($lindent:expr, $rindent:expr, $prefix:expr, $($arg:tt)*) => {
         unsafe {
+            use std::fmt::Write as FmtWrite;
             use $crate::report;
             let tw = report::get_terminal_width() -
                 $crate::debug::DEBUG_MARKER_LEN - 3 - $rindent;

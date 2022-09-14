@@ -537,13 +537,13 @@ macro_rules! warning {
     }
 }
 
-/// Macro to return an error result of type Result, using eyre crate
+/// Macro to print an error and exit the program.
 #[allow(unused_imports)]
 #[macro_export]
 macro_rules! error {
     ($($arg:tt)*) => ({
-        use eyre;
-        Err(eyre::eyre!($($arg)*))
+        std::println!($($arg)*);
+        std::process::exit(1)
     })
 }
 

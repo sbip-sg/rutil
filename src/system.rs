@@ -64,3 +64,11 @@ pub fn ls_dir(dir_path: &str) -> Vec<String> {
 pub fn get_file_ext(filename: &str) -> Option<&str> {
     Path::new(filename).extension().and_then(OsStr::to_str)
 }
+
+pub fn is_folder(filename: &str) -> Option<bool>{
+    let metadata = fs::metadata(filename);
+    match metadata {
+        Err(_) => Some(false),
+        Ok(v) => Some(v.is_dir())
+    }
+}

@@ -196,7 +196,7 @@ macro_rules! todo {
             use $crate::report;
             use $crate::debug;
             if !debug::DISABLE_PRINTING {
-                let marker = if debug::DEBUG_MODE { "[!!!]" } else { "" };
+                let marker = if debug::DEBUG_MODE { "[!!!] " } else { "" };
                 debug::DEBUG_MARKER_LEN = marker.len();
                 let msg = "TODO: Not yet implemented!\n";
                 let tw = report::get_terminal_width();
@@ -220,7 +220,7 @@ macro_rules! todo {
             use $crate::report;
             use $crate::debug;
             if !$crate::debug::DISABLE_PRINTING {
-                let marker = if debug::DEBUG_MODE { "[!!!]" } else { "" };
+                let marker = if debug::DEBUG_MODE { "[!!!] " } else { "" };
                 let mkr_len = marker.len();
                 debug::DEBUG_MARKER_LEN = marker.len();
                 // let msg = "TODO: ".to_owned() +

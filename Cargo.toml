@@ -10,7 +10,9 @@ linting = []
 # Dependencies should be alphabetically sorted.
 # Use package version in form of "x.y" to avoid updating them frequently.
 [dependencies]
+anyhow = "1.0"
 clap = "3.1"
 remain = "0.2"
 termsize = { package = "terminal_size", version = "0.1" }
 textwrap = "0.15"
+backtrace = "0.3"

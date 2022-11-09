@@ -577,3 +577,59 @@ macro_rules! assert_stdout_eq {
         assert_eq!(&output[..], $expected);
     }};
 }
+
+
+/// Macro to get backtrace
+#[allow(unused_imports, unused_unsafe)]
+#[macro_export]
+macro_rules! get_backtrace {
+    () => {
+        unsafe {
+            if $crate::globals::DEBUG_PARSER {
+                format!(
+                    "\n--------------------------\n{}\n{:?}",
+                    "Backtrace:",
+                    backtrace::Backtrace::new()
+                )
+            } else {
+                "".to_owned()
+            }
+        }
+    };
+}
+
+/// Macro to return an `anyhow` error and backtrace.
+#[allow(unused_imports, unused_unsafe)]
+#[macro_export]
+macro_rules! anyhow_backtrace {
+    ($($arg:tt)*) => {
+        unsafe {
+            let err = anyhow::anyhow!($($arg)*);
+            let backtrace = match rutil::debug::DEEP_DEBUG_MODE {
+                true => format!("\n--------------------------\n{}\n{:?}",
+                                "Backtrace:",
+                                backtrace::Backtrace::new()),
+                false => "".to_owned()
+            };
+            anyhow::anyhow!(format!("{}{}", err, backtrace))
+        }
+    };
+}
+
+/// Macro to report an `anyhow` error and backtrace.
+#[allow(unused_imports, unused_unsafe)]
+#[macro_export]
+macro_rules! bail_backtrace {
+    ($($arg:tt)*) => {
+        unsafe {
+            let err = anyhow::anyhow!($($arg)*);
+            let backtrace = match rutil::debug::DEEP_DEBUG_MODE {
+                true => format!("\n--------------------------\n{}\n{:?}",
+                                "Backtrace:",
+                                backtrace::Backtrace::new()),
+                false => "".to_owned()
+            };
+            anyhow::bail!(format!("{}{}", err, backtrace))
+        }
+    };
+}

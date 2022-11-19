@@ -578,7 +578,6 @@ macro_rules! assert_stdout_eq {
     }};
 }
 
-
 /// Macro to get backtrace
 #[allow(unused_imports, unused_unsafe)]
 #[macro_export]

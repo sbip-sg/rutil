@@ -211,7 +211,9 @@ pub fn log_file_name(
 }
 
 /// Function to override the panicking message.
-pub fn override_panic_message() {
+///
+/// Input: `note` is the final note to be printed after all error messages.
+pub fn override_panic_message(note: &'static str) {
     // Replace panic message when backtrace is disabled.
     if std::env::var("RUST_BACKTRACE").is_err() {
         std::panic::set_hook(Box::new(|panic_info| {
@@ -232,7 +234,6 @@ pub fn override_panic_message() {
             let thread = std::thread::current();
             let thread = thread.name().unwrap_or("unknown");
 
-            let term_width = get_terminal_width();
             // let func = std::format!("{},", panic_function!());
             let file = match panic_info.location() {
                 Some(loc) => std::format!(
@@ -244,18 +245,21 @@ pub fn override_panic_message() {
                 None => "unknown file".to_owned(),
             };
 
+            let mut info = format!("Thread '{}' {}", thread, reason);
+            if !info.ends_with('.') {
+                write!(info, ".").ok();
+            }
             let tw = get_terminal_width();
-            let msg = format!("Thread '{}' {}", thread, reason);
-            let msg = ite!(msg.ends_with('.'), msg, msg + ".");
+            info = beautify_string("[Error] ", true, 0, "", &info, tw);
+            write!(info, "\n{}\n", &log_file_name("", 0, &file, tw)).ok();
+            let note = match note.is_empty() {
+                false => note.to_owned(),
+                true => "run with `RUST_BACKTRACE=1` to display backtrace."
+                    .to_owned(),
+            };
 
-            let msg = beautify_string("[Error] ", true, 0, "", &msg, tw);
-
-            let msg = msg
-                + "\n"
-                + &log_file_name("", 0, &file, term_width)
-                + "\n"
-                + "| Note: run with `RUST_BACKTRACE=1` to display backtrace.";
-            std::println!("{}", msg)
+            write!(info, "| Note: {}", note).ok();
+            std::println!("{}", info)
         }));
     }
 }

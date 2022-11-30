@@ -10,7 +10,7 @@ where
     T: Display,
 {
     items
-        .into_iter()
+        .iter()
         .map(|elem| format!("{}", elem))
         .collect::<Vec<String>>()
         .join(separator)
@@ -28,7 +28,7 @@ where
     T: Display,
 {
     items
-        .into_iter()
+        .iter()
         .map(|elem| printer(elem))
         .collect::<Vec<String>>()
         .join(separator)

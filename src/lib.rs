@@ -27,6 +27,7 @@ pub mod macros;
 pub mod anyhow;
 pub mod arg;
 pub mod debug;
+pub mod print;
 pub mod report;
 pub mod string;
 pub mod system;

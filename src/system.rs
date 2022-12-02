@@ -1,9 +1,9 @@
 //! Module containing utility functions at the operating system level
 
+use crate::warning;
+use anyhow::{bail, Result};
 use std::{env, fs, process};
 use std::{ffi::OsStr, path::Path};
-
-use crate::warning;
 
 /// Operating system information
 mod os {
@@ -63,4 +63,32 @@ pub fn ls_dir(dir_path: &str) -> Vec<String> {
 /// get file extension
 pub fn get_file_ext(filename: &str) -> Option<&str> {
     Path::new(filename).extension().and_then(OsStr::to_str)
+}
+
+/// Get the parent directory of a file.
+///
+/// Return `None` if the parent directory is not found or empty.
+pub fn get_parent_directory(filename: &str) -> Option<String> {
+    let file_path = Path::new(&filename);
+
+    let parent_dir = match file_path.parent() {
+        Some(path) => path.to_str().unwrap_or(""),
+        None => "",
+    };
+
+    match parent_dir.is_empty() {
+        true => None,
+        false => Some(parent_dir.to_owned()),
+    }
+}
+
+/// Get the current working directory.
+pub fn get_current_directory() -> Result<String> {
+    match std::env::current_dir() {
+        Ok(path) => match path.to_str() {
+            Some(path) => Ok(path.to_owned()),
+            None => bail!("Current directory not found!"),
+        },
+        Err(err) => bail!(err),
+    }
 }

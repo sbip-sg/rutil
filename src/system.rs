@@ -36,7 +36,7 @@ pub fn path_of_command_from_env(cmd: &str) -> Result<String, String> {
         }
     };
 
-    match process::Command::new(finder).args(&[cmd]).output() {
+    match process::Command::new(finder).args([cmd]).output() {
         Ok(output) => {
             let cmd_path = String::from_utf8(output.stdout).unwrap_or_default();
             Ok(cmd_path.trim().to_string())

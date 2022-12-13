@@ -8,7 +8,6 @@ pub trait ArgExt<'a> {
     fn new_argument(name: &'a str) -> Self;
 }
 
-/// Implement trait `ArgExt` for Arg
 impl<'a> ArgExt<'a> for Arg<'a> {
     fn new_argument(name: &'a str) -> Self {
         Arg::new(name).long(name)

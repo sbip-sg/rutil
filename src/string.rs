@@ -43,7 +43,6 @@ pub trait StringExt<'a> {
     ) -> Self;
 }
 
-/// Implement trait `StringExt` for `String`.
 impl<'a> StringExt<'a> for String {
     /// Check if a string contains the new line character.
     fn has_new_line(&self) -> bool {

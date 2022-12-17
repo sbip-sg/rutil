@@ -28,6 +28,9 @@ pub trait StringExt<'a> {
     /// Add prefix and suffix to a string.
     fn add_prefix_and_suffix(self, prefix: &str, suffix: &str) -> Self;
 
+    /// Strip suffix if existing.
+    fn strip_suffix_if_existing(self, suffix: &str) -> Self;
+
     /// Check if a string is enclosed by brackets
     fn is_bracket_enclosed(&self) -> bool;
 
@@ -114,6 +117,13 @@ impl<'a> StringExt<'a> for String {
 
     fn add_prefix_and_suffix(self, prefix: &str, suffix: &str) -> Self {
         format!("{prefix}{self}{suffix}")
+    }
+
+    fn strip_suffix_if_existing(self, suffix: &str) -> Self {
+        match self.strip_suffix(suffix) {
+            Some(output) => output.to_string(),
+            None => self,
+        }
     }
 
     fn is_bracket_enclosed(&self) -> bool {

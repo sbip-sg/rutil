@@ -47,7 +47,7 @@ pub fn print_code_fragment_and_position(
         }
     };
     let reader = BufReader::new(file);
-    let mut lines = reader.lines().skip(begin_line.try_into().unwrap());
+    let mut lines = reader.lines().skip(begin_line as usize);
     let mut res = String::new();
     // lines.next returns: Option<Result<String, std::io::Error>>`
     for i in 1..line + 3 - begin_line {
@@ -63,7 +63,7 @@ pub fn print_code_fragment_and_position(
                 res,
                 "  {}|>{}^^^",
                 " ".repeat((i + begin_line).to_string().len()),
-                " ".repeat(begin_col.try_into().unwrap())
+                " ".repeat(begin_col as usize)
             );
         } else {
             let _ = writeln!(res, "{}", curr_line);

@@ -579,6 +579,8 @@ macro_rules! assert_stdout_eq {
 }
 
 /// Macro to get backtrace
+///
+/// Need to declare `backtrace` crate dependency in Cargo.ml to use this macro.
 #[allow(unused_imports, unused_unsafe)]
 #[macro_export]
 macro_rules! get_backtrace {
@@ -598,6 +600,8 @@ macro_rules! get_backtrace {
 }
 
 /// Macro to return an `anyhow` error and backtrace.
+///
+/// Need to declare `backtrace` crate dependency in Cargo.ml to use this macro.
 #[allow(unused_imports, unused_unsafe)]
 #[macro_export]
 macro_rules! anyhow_backtrace {
@@ -616,6 +620,8 @@ macro_rules! anyhow_backtrace {
 }
 
 /// Macro to report an `anyhow` error and backtrace.
+///
+/// Need to declare `backtrace` crate dependency in Cargo.ml to use this macro.
 #[allow(unused_imports, unused_unsafe)]
 #[macro_export]
 macro_rules! bail_backtrace {

@@ -60,3 +60,9 @@ impl NamingEnv {
         (final_idx, new_env)
     }
 }
+
+impl Default for NamingEnv {
+    fn default() -> Self {
+        Self::new()
+    }
+}

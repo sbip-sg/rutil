@@ -32,3 +32,4 @@ pub mod print;
 pub mod report;
 pub mod string;
 pub mod system;
+pub mod naming;

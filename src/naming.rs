@@ -7,10 +7,10 @@ use std::collections::HashMap;
 #[derive(Clone)]
 pub struct NamingEnv {
     /// Mapping a name to its index in the current scope.
-    current_naming_index: HashMap<String, usize>,
+    pub current_naming_index: HashMap<String, usize>,
 
     /// Mapping a name to its index counter (the maximum index of this name).
-    naming_index_counter: HashMap<String, usize>,
+    pub naming_index_counter: HashMap<String, usize>,
 }
 
 impl NamingEnv {

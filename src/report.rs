@@ -101,6 +101,15 @@ pub fn beautify_string(
     let prefix_len = prefix.len();
     let text_width = line_width - marker_len - prefix_len - indent;
 
+    // Count number of new lines at the beginning of the string `msg`
+    let mut num_beginning_newlines = 0;
+    for c in msg.chars() {
+        match c {
+            '\n' => num_beginning_newlines += 1,
+            _ => break,
+        }
+    }
+
     // Count number of new lines at the end of the string `msg`
     let mut num_trailing_newlines = 0;
     for c in msg.chars().rev() {
@@ -110,30 +119,36 @@ pub fn beautify_string(
         }
     }
 
-    // Wrap text by a line width. This action will remove all trailing newlines.
+    // Strip all newlines and Wrap text by a line width
+    let msg = msg.trim();
     let wrap_options = textwrap::Options::new(text_width)
         .word_separator(textwrap::WordSeparator::AsciiSpace)
         .word_splitter(textwrap::WordSplitter::NoHyphenation);
-    let res = textwrap::wrap(msg, &wrap_options).join("\n");
-
-    // Restore the number of trailing newlines.
-    let res = format!("{}{}", res, "\n".repeat(num_trailing_newlines));
+    let msg = textwrap::wrap(msg, &wrap_options).join("\n");
 
     // Indent tail lines by 1 space if the string is bracket enclosed
-    let res = match res.is_bracket_enclosed() {
-        true => res.indent_tail_lines(1),
-        false => res,
+    let res = match msg.is_bracket_enclosed() {
+        true => msg.indent_tail_lines(1),
+        false => msg,
     };
 
     // Prepend marker, indentation, and prefix for the first line
-    let res = marker.to_owned() + &" ".repeat(indent) + prefix + &res;
+    let msg = marker.to_owned() + &" ".repeat(indent) + prefix + &res;
 
-    // Finally, prepend marker continuation or indentation for other lines
+    // Prepend marker continuation or indentation for other lines
     let tail_line_indent = marker_len + prefix_len + indent;
-    match marker_continuation {
-        true => res.indent_and_prefix_tail_lines(0, "|"),
-        false => res.indent_tail_lines(tail_line_indent),
-    }
+    let msg = match marker_continuation {
+        true => msg.indent_and_prefix_tail_lines(0, "|"),
+        false => msg.indent_tail_lines(tail_line_indent),
+    };
+
+    // Restore the number of trailing newlines.
+    format!(
+        "{}{}{}",
+        "\n".repeat(num_beginning_newlines),
+        msg,
+        "\n".repeat(num_trailing_newlines)
+    )
 }
 
 /// Format a function name to `String` for logging purpose.

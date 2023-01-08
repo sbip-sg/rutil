@@ -94,18 +94,30 @@ pub fn beautify_string(
     marker_continuation: bool,
     indent: usize,
     prefix: &str,
-    output: &str,
+    msg: &str,
     line_width: usize,
 ) -> String {
     let marker_len = marker.len();
     let prefix_len = prefix.len();
     let text_width = line_width - marker_len - prefix_len - indent;
 
-    // Wrap text by a max line width
+    // Count number of new lines at the end of the string `msg`
+    let mut num_trailing_newlines = 0;
+    for c in msg.chars().rev() {
+        match c {
+            '\n' => num_trailing_newlines += 1,
+            _ => break,
+        }
+    }
+
+    // Wrap text by a line width. This action will remove all trailing newlines.
     let wrap_options = textwrap::Options::new(text_width)
         .word_separator(textwrap::WordSeparator::AsciiSpace)
         .word_splitter(textwrap::WordSplitter::NoHyphenation);
-    let res = textwrap::wrap(output, &wrap_options).join("\n");
+    let res = textwrap::wrap(msg, &wrap_options).join("\n");
+
+    // Restore the number of trailing newlines.
+    let res = format!("{}{}", res, "\n".repeat(num_trailing_newlines));
 
     // Indent tail lines by 1 space if the string is bracket enclosed
     let res = match res.is_bracket_enclosed() {

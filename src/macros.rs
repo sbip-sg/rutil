@@ -252,7 +252,7 @@ macro_rules! debug_core {
             $crate::debug::DEBUG_MARKER_LEN = $marker.len();
             // let msg = std::fmt::format(std::format_args_nl!($($arg)*));
             let mut msg = String::new();
-            let _ = writeln!(msg, $($arg)*);
+            let _ = write!(msg, $($arg)*);
             let tw = report::get_terminal_width();
             let msg = report::beautify_string($marker, false, $indent, $prefix,
                                               &msg, tw);

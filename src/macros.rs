@@ -27,7 +27,6 @@ macro_rules! function {
 
 /// Macro to format a string with indentation for each line.
 #[allow(unused_imports, unused_unsafe)]
-// #[allow_internal_unstable(format_args_nl)]
 #[macro_export]
 macro_rules! formati {
     ($indent:expr, $($arg:tt)*) => {
@@ -36,7 +35,6 @@ macro_rules! formati {
             use $crate::report;
             let tw = report::get_terminal_width() -
                 $crate::debug::DEBUG_MARKER_LEN - 3;
-            // let msg = std::fmt::format(std::format_args_nl!($($arg)*));
             let mut msg = String::new();
             let _ = writeln!(msg, $($arg)*);
             report::beautify_string("", false, $indent, "", &msg, tw)
@@ -54,7 +52,6 @@ macro_rules! formatp {
             use $crate::report;
             let tw = report::get_terminal_width() -
                 $crate::debug::DEBUG_MARKER_LEN - 3 - $rindent;
-            // let msg = std::fmt::format(std::format_args_nl!($($arg)*));
             let mut msg = String::new();
             let _ = writeln!(msg, $($arg)*);
             report::beautify_string("", false, $lindent, $prefix, &msg, tw)
@@ -75,6 +72,7 @@ macro_rules! print {
     };
     ($($arg:tt)*) => {
         unsafe {
+            use std::fmt::Write as FmtWrite;
             use $crate::report;
             if !$crate::debug::DISABLE_PRINTING {
                 if $crate::debug::DEBUG_MODE {
@@ -87,7 +85,9 @@ macro_rules! print {
                     $crate::debug::DEBUG_MARKER_LEN = 0
                 }
                 else {
-                    std::io::_print($crate::format_args_nl!($($arg)*));
+                    let mut msg = String::new();
+                    let _ = write!(msg, $($arg)*);
+                    std::print!("{}", msg);
                 }
             }
         }
@@ -460,7 +460,6 @@ macro_rules! ddebug_header_2 {
 
 /// Macro to print a fixme message.
 #[allow(unused_imports, unused_unsafe)]
-// #[allow_internal_unstable(format_args_nl)]
 #[macro_export]
 macro_rules! fixme {
     () => {
@@ -499,7 +498,6 @@ macro_rules! fixme {
 
 /// Macro to print a warning message.
 #[allow(unused_imports, unused_unsafe)]
-// #[allow_internal_unstable(format_args_nl)]
 #[macro_export]
 macro_rules! warning {
     () => {
@@ -517,7 +515,6 @@ macro_rules! warning {
             if !debug::DISABLE_PRINTING {
                 let marker = if debug::DEBUG_MODE { "[WRN]" } else { "" };
                 debug::DEBUG_MARKER_LEN = marker.len();
-                // let msg = std::fmt::format(std::format_args_nl!($($arg)*));
                 let mut msg = String::new();
                 let _ = writeln!(msg, $($arg)*);
                 let tw = report::get_terminal_width();

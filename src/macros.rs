@@ -204,11 +204,10 @@ macro_rules! todo {
                 let file = std::format!("{}:{}:{}",
                                         std::file!(), std::line!(),
                                         std::column!());
-                let msg = report::beautify_string(marker, true, 0, "", &msg, tw) +
-                    "\n" +
-                    &report::log_function_name("", 6, &func, tw) +
-                    "\n" +
-                    &report::log_file_name("", 6, &file, tw);
+                let msg = "\n".to_owned() +
+                    &report::beautify_string(marker, true, 0, "", &msg, tw) +
+                    "\n" + &report::log_function_name(&func, tw) +
+                    "\n" + &report::log_file_name(&file, tw);
                 std::println!("{}", msg);
                 debug::DEBUG_MARKER_LEN = 0
             }
@@ -221,7 +220,6 @@ macro_rules! todo {
             use $crate::debug;
             if !$crate::debug::DISABLE_PRINTING {
                 let marker = if debug::DEBUG_MODE { "[!!!] " } else { "" };
-                let mkr_len = marker.len();
                 debug::DEBUG_MARKER_LEN = marker.len();
                 // let msg = "TODO: ".to_owned() +
                 //     &std::fmt::format(bstd::format_args_nl!($($arg)*));
@@ -232,11 +230,10 @@ macro_rules! todo {
                 let file = format!("{}:{}:{}",
                                     std::file!(), std::line!(),
                                     std::column!());
-                let msg = report::beautify_string(marker, false, 0, "", &msg, tw) +
-                    "\n" +
-                    &report::log_function_name("", mkr_len, &func, tw) +
-                    "\n" +
-                    &report::log_file_name("", mkr_len, &file, tw);
+                let msg = "\n".to_owned() +
+                    &report::beautify_string(marker, false, 0, "", &msg, tw) +
+                    "\n" + &report::log_function_name(&func, tw) +
+                    "\n" + &report::log_file_name(&file, tw);
                 std::println!("{}", msg);
                 debug::DEBUG_MARKER_LEN = 0
             }
@@ -484,11 +481,10 @@ macro_rules! fixme {
                 let file = std::format!("{}:{}:{}",
                                         std::file!(), std::line!(),
                                         std::column!());
-                let msg = report::beautify_string(marker, true, 0, "", &msg, tw) +
-                    "\n" +
-                    &report::log_function_name("", 6, &func, tw) +
-                    "\n" +
-                    &report::log_file_name("", 6, &file, tw);
+                let msg =  "\n".to_owned() +
+                    &report::beautify_string(marker, true, 0, "", &msg, tw) +
+                    "\n" + &report::log_function_name(&func, tw) +
+                    "\n" + &report::log_file_name(&file, tw);
                 std::println!("{}", msg);
                 debug::DEBUG_MARKER_LEN = 0
             }
@@ -522,11 +518,10 @@ macro_rules! warning {
                 let file = std::format!("{}:{}:{}",
                                         std::file!(), std::line!(),
                                         std::column!());
-                let msg = report::beautify_string(marker, true, 0, "", &msg, tw) +
-                    "\n" +
-                    &report::log_function_name("", 6, &func, tw) +
-                    "\n" +
-                    &report::log_file_name("", 6, &file, tw);
+                let msg =  "\n".to_owned() +
+                    &report::beautify_string(marker, true, 0, "", &msg, tw) +
+                    "\n" + &report::log_function_name(&func, tw) +
+                    "\n" + &report::log_file_name(&file, tw);
                 std::println!("{}", msg);
                 debug::DEBUG_MARKER_LEN = 0
             }

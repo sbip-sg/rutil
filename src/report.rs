@@ -116,27 +116,21 @@ pub fn beautify_string(
     // Prepend marker, indentation, and prefix for the first line
     let res = marker.to_owned() + &" ".repeat(indent) + prefix + &res;
 
-    // Finally, prepend marker continuation and indentation for other lines
+    // Finally, prepend marker continuation or indentation for other lines
     let tail_line_indent = marker_len + prefix_len + indent;
     match marker_continuation {
-        true => res.indent_and_prefix_tail_lines(tail_line_indent - 1, "|"),
+        true => res.indent_and_prefix_tail_lines(0, "|"),
         false => res.indent_tail_lines(tail_line_indent),
     }
 }
 
 /// Format a function name to `String` for logging purpose.
-pub fn log_function_name(
-    marker: &str,
-    indent: usize,
-    output: &str,
-    line_width: usize,
-) -> String {
-    let marker_len = marker.len();
+pub fn log_function_name(output: &str, line_width: usize) -> String {
     let msg_prefix = "Function: ";
     let line_prefix = "| ";
     let mpref_len = msg_prefix.len();
     let lpref_len = line_prefix.len();
-    let text_width = line_width - marker_len - mpref_len - lpref_len - indent;
+    let text_width = line_width - mpref_len - lpref_len;
 
     /// Function to split a long function name
     fn split_word(word: &str) -> Vec<usize> {
@@ -158,7 +152,7 @@ pub fn log_function_name(
             } else {
                 " ".repeat(mpref_len) + line
             };
-            " ".repeat(indent) + line_prefix + &line
+            line_prefix.to_owned() + &line
         })
         .collect::<Vec<String>>()
         .join("\n");
@@ -168,18 +162,12 @@ pub fn log_function_name(
 }
 
 /// Format a file name to `String` for logging purpose.
-pub fn log_file_name(
-    marker: &str,
-    indent: usize,
-    output: &str,
-    line_width: usize,
-) -> String {
-    let marker_len = marker.len();
+pub fn log_file_name(output: &str, line_width: usize) -> String {
     let msg_prefix = "File: ";
     let mpref_len = msg_prefix.len();
     let line_prefix = "| ";
     let lpref_len = line_prefix.len();
-    let text_width = line_width - marker_len - mpref_len - lpref_len - indent;
+    let text_width = line_width - mpref_len - lpref_len;
 
     /// Function to split a long file name
     fn split_word(word: &str) -> Vec<usize> {
@@ -201,7 +189,7 @@ pub fn log_file_name(
             } else {
                 " ".repeat(mpref_len) + line
             };
-            " ".repeat(indent) + line_prefix + &line
+            line_prefix.to_owned() + &line
         })
         .collect::<Vec<String>>()
         .join("\n");
@@ -251,7 +239,7 @@ pub fn override_panic_message(note: &'static str) {
             }
             let tw = get_terminal_width();
             info = beautify_string("[Error] ", true, 0, "", &info, tw);
-            write!(info, "\n{}\n", &log_file_name("", 0, &file, tw)).ok();
+            write!(info, "\n{}\n", &log_file_name(&file, tw)).ok();
             let note = match note.is_empty() {
                 false => note.to_owned(),
                 true => "run with `RUST_BACKTRACE=1` to display backtrace."

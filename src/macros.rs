@@ -36,7 +36,7 @@ macro_rules! formati {
             let tw = report::get_terminal_width() -
                 $crate::debug::DEBUG_MARKER_LEN - 3;
             let mut msg = String::new();
-            let _ = writeln!(msg, $($arg)*);
+            let _ = write!(msg, $($arg)*);
             report::beautify_string("", false, $indent, "", &msg, tw)
         }
     }
@@ -53,7 +53,7 @@ macro_rules! formatp {
             let tw = report::get_terminal_width() -
                 $crate::debug::DEBUG_MARKER_LEN - 3 - $rindent;
             let mut msg = String::new();
-            let _ = writeln!(msg, $($arg)*);
+            let _ = write!(msg, $($arg)*);
             report::beautify_string("", false, $lindent, $prefix, &msg, tw)
         }
     }
@@ -224,7 +224,7 @@ macro_rules! todo {
                 // let msg = "TODO: ".to_owned() +
                 //     &std::fmt::format(bstd::format_args_nl!($($arg)*));
                 let mut msg = "TODO: ".to_owned();
-                let _ = writeln!(msg, $($arg)*);
+                let _ = write!(msg, $($arg)*);
                 let tw = report::get_terminal_width();
                 let func = format!("{}", $crate::function!());
                 let file = format!("{}:{}:{}",
@@ -475,7 +475,7 @@ macro_rules! fixme {
                 let marker = if debug::DEBUG_MODE { "[!!!]" } else { "" };
                 debug::DEBUG_MARKER_LEN = marker.len();
                 let mut msg = "FIXME: ".to_owned();
-                let _ = writeln!(msg, $($arg)*);
+                let _ = write!(msg, $($arg)*);
                 let tw = report::get_terminal_width();
                 let func = std::format!("{}", $crate::function!());
                 let file = std::format!("{}:{}:{}",
@@ -512,7 +512,7 @@ macro_rules! warning {
                 let marker = if debug::DEBUG_MODE { "[WRN]" } else { "" };
                 debug::DEBUG_MARKER_LEN = marker.len();
                 let mut msg = String::new();
-                let _ = writeln!(msg, $($arg)*);
+                let _ = write!(msg, $($arg)*);
                 let tw = report::get_terminal_width();
                 let func = std::format!("{}", $crate::function!());
                 let file = std::format!("{}:{}:{}",

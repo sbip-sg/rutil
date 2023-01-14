@@ -4,28 +4,21 @@ use std::{ffi::OsStr, fs::File, io::Write, path::Path};
 
 use anyhow::{bail, Result};
 
-/// Function to save a string to a temporary file.
+/// Function to save a string to a temporary file of a given name.
 ///
-/// The output file name is randomly generated if it is not supplied.
-pub fn save_to_temporary_file(
-    content: &str,
-    filename: Option<&str>,
-) -> Result<()> {
-    let mut output_file = match filename {
-        None => tempfile::tempfile()?,
-        Some(filename) => {
-            // Create a temporarily directory as the output test directory
-            let output_dir_path = match tempfile::tempdir() {
-                Ok(dir) => dir.into_path(),
-                Err(err) => bail!(err),
-            };
-            let output_file_path = output_dir_path.join(filename);
-            File::create(output_file_path)?
-        }
+/// Return the output file path.
+pub fn save_to_temporary_file(content: &str, filename: &str) -> Result<String> {
+    let output_dir_path = match tempfile::tempdir() {
+        Ok(dir) => dir.into_path(),
+        Err(err) => bail!(err),
     };
-
+    let output_file_path = output_dir_path.join(filename);
+    let mut output_file = File::create(&output_file_path)?;
     match output_file.write_all(content.as_bytes()) {
-        Ok(_) => Ok(()),
+        Ok(_) => match output_file_path.to_str() {
+            Some(path) => Ok(path.to_string()),
+            None => bail!("Output file path not found!"),
+        },
         Err(err) => bail!(err),
     }
 }

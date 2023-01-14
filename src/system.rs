@@ -3,7 +3,6 @@
 use crate::warning;
 use anyhow::{bail, Result};
 use std::{env, fs, process};
-use std::{ffi::OsStr, path::Path};
 
 /// Operating system information
 mod os {
@@ -57,28 +56,6 @@ pub fn ls_dir(dir_path: &str) -> Vec<String> {
             })
             .collect(),
         Err(_) => vec![],
-    }
-}
-
-/// get file extension
-pub fn get_file_ext(filename: &str) -> Option<&str> {
-    Path::new(filename).extension().and_then(OsStr::to_str)
-}
-
-/// Get the parent directory of a file.
-///
-/// Return `None` if the parent directory is not found or empty.
-pub fn get_parent_directory(filename: &str) -> Option<String> {
-    let file_path = Path::new(&filename);
-
-    let parent_dir = match file_path.parent() {
-        Some(path) => path.to_str().unwrap_or(""),
-        None => "",
-    };
-
-    match parent_dir.is_empty() {
-        true => None,
-        false => Some(parent_dir.to_owned()),
     }
 }
 

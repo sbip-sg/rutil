@@ -28,6 +28,7 @@ pub mod macros;
 // pub mod cli;
 pub mod arg;
 pub mod debug;
+pub mod file;
 pub mod naming;
 pub mod print;
 pub mod report;
